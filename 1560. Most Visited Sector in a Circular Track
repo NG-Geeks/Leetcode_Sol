@@ -1,0 +1,38 @@
+Problem :: 1560. Most Visited Sector in a Circular Track
+Given an integer n and an integer array rounds. We have a circular track which consists of n sectors labeled from 1 to n. A marathon will be held on this track, the marathon consists of m rounds.
+The ith round starts at sector rounds[i - 1] and ends at sector rounds[i]. For example, round 1 starts at sector rounds[0] and ends at sector rounds[1]
+Return an array of the most visited sectors sorted in ascending order.
+Notice that you circulate the track in ascending order of sector numbers in the counter-clockwise direction (See the first example).
+
+Time Complexity :: O(N)
+Space Complexity :: O(N)
+
+Code::
+#pragma gcc optimize("03")
+auto init = [](){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    return 'c';
+}();
+class Solution {
+public:
+    vector<int> mostVisited(int n, vector<int>& rounds) {
+        vector<int>v(n, 0);
+        int s = rounds[0] - 1;
+        v[s]++;
+        for(int i=0 ; i<rounds.size() ; i++){
+             while(s!= rounds[i]-1){
+                s++;
+                s%=n;
+                v[s]++;
+             }
+        }
+        vector<int>ans;
+        int maxi =*max_element(begin(v), end(v));
+        for(int i = 0 ;i<n ; i++ ){
+            if(v[i]==maxi)ans.push_back(i+1);
+         }
+      return ans;
+    }
+};
