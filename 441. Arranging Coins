@@ -1,0 +1,28 @@
+Problem:: 441. Arranging Coins
+You have n coins and you want to build a staircase with these coins. The staircase consists of k rows where the ith row has exactly i coins. The last row of the staircase may be incomplete.
+Given the integer n, return the number of complete rows of the staircase you will build.
+
+Time Complexity:: O(n)
+Space Complexity::O(1)
+
+Code::
+#pragma gcc optimize("03")
+auto init =[](){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    return 'c';
+}();
+class Solution {
+public:
+    int arrangeCoins(int n) {
+    
+      int k=0;
+      while(n){
+          n= n-k;
+          if(n<0)break;
+          k++;
+      }
+        return k-1;
+    }
+};
