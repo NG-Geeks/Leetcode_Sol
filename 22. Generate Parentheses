@@ -1,0 +1,70 @@
+Problem ::22. Generate Parentheses
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+Intuition::
+    We know that no. of  open "("  bracket will be equal to no.
+    of closing bracket ")" and closing bracket cannot come before
+    opening bracket.  So we will use two variable for keeping 
+    track of open and close bracket . 
+
+    create empty string.
+    Call the function with 0,0 denoting zero open bracket and close
+    bracket.
+    first insert open bracket in string and increase count of open
+    variable. As open bracket cannot be more then n .
+    After that insert close bracket . till close bracket is less 
+    then open bracket.
+
+    For Eg.  n = 2;
+    first call // "(" open = 0 , close = 0  , n= 2 , open<n , open +=1 , open = 1
+    second call // "((" open = 1 , close = 0 , n = 2 , open<n , open_=1 , open = 1;
+    third call // As open == n so conditon will be false , 
+    Now second condtion will apply // "(()" open = 2 , close +=1 , n= 2 , close<open
+    fourth call // due  to second condition "(())" open =2 , close+=1 , close<open  , n=2 
+    Fifth call // Now base condition will work that string size is equal to 2*n so we have found one valid string . Now insert into vector
+    Backtracking  to first call
+    Now again second condition will work and 
+    "()" // open =1 , close+=1 , n=2 
+    Second call "()(" // open +=1 , close =1 , n= 2 , open <n
+    Third call "()()" // open == n So  second condition  will continue close <open  close +=1 , open =2 , n= 2
+    Forth call so base condition will work and string will be inserted in vector 
+    
+    So vector will containing "(())" , "()()"
+// Backtrack to starting call function
+
+
+Complexity ::
+Time complexity:
+    O(N) 
+Space complexity:
+    O(1) // Ignoring the 
+
+
+Code ::
+#pragma gcc optimize("03")
+auto init = [](){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    return 'c';
+}();
+class Solution {
+    void solve(int n ,int open ,int close , vector<string>&v , string s){
+        if(s.size()==2*n){
+            v.push_back(s);
+            return ;
+        }
+        if(open<n){
+            solve(n , open+1, close , v , s+'(');
+        }
+        if(close<open){
+            solve(n , open ,close+1 , v , s+')');
+        }
+    }
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string>v;
+        solve(n ,0 , 0 , v , "");
+        return v;
+    }
+};
