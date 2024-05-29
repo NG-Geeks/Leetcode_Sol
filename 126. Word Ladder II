@@ -1,0 +1,113 @@
+Problem :: 
+126. Word Ladder II
+
+A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that:
+
+Every adjacent pair of words differs by a single letter.
+Every si for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList.
+sk == endWord
+Given two words, beginWord and endWord, and a dictionary wordList, return all the shortest transformation sequences from beginWord to endWord, or an empty list if no such sequence exists. Each sequence should be returned as a list of the words [beginWord, s1, s2, ..., sk].
+
+Solution :: 
+First Approach::
+class Solution {
+    unordered_map<string, int> mpp;
+    vector<vector<string>> ans;
+public:
+    void dfs(string beginWord, string word, vector<string> &seq) {
+        if(word == beginWord) {
+            reverse(seq.begin(), seq.end());
+            ans.push_back(seq);
+            reverse(seq.begin(), seq.end());
+            return;
+        }
+        int sz = word.size();
+        int step = mpp[word];
+        for(int i = 0; i < sz; i++) {
+            char org = word[i];
+            for(int j = 'a'; j <= 'z'; j++) {
+                word[i] = j;
+                if(mpp.find(word) != mpp.end() && mpp[word] == step-1) {
+                    seq.push_back(word);
+                    dfs(beginWord, word, seq);
+                    seq.pop_back();
+                }
+            }
+            word[i] = org;
+        }
+    }
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> st(wordList.begin(), wordList.end());
+        queue<string> q;
+        q.push(beginWord);
+        mpp[beginWord] = 1;
+        int sz = beginWord.size();
+        st.erase(beginWord);
+        while(!q.empty()) {
+            string word = q.front();
+            int steps = mpp[word];
+            q.pop();
+            if(word == endWord) break;
+            for(int i = 0; i < sz; i++) {
+                char org = word[i];
+                for(int j = 'a'; j <= 'z'; j++) {
+                    word[i] = j;
+                    if(st.find(word) != st.end()) {
+                        q.push(word);
+                        st.erase(word);
+                        mpp[word] = steps + 1;
+                    }
+                }
+                word[i] = org;
+            }
+        }
+        if(mpp.find(endWord) != mpp.end()) {
+            vector<string> seq;
+            seq.push_back(endWord);
+            dfs(beginWord, endWord, seq);
+        }
+        return ans;
+    }
+};
+
+
+second approach ::
+class Solution {
+public:
+    vector<vector<string>> findSequences(string beginWord, string endWord, vector<string>& word) {
+           vector<vector<string >> ans;
+        unordered_set<string>st(word.begin() ,word.end());
+        queue<vector<string>>q;
+        q.push({beginWord});
+        int level =0;
+        vector<string>usedOnLevel;
+        usedOnLevel.push_back(beginWord);
+        while(!q.empty()){
+            vector<string>vec = q.front();
+            q.pop();
+            if(vec.size()>level){
+                level++;
+                for(auto it:usedOnLevel)st.erase(it);
+            }
+            string word = vec.back();
+            if(word == endWord){
+                if(ans.size()==0)ans.push_back(vec);
+                else if(ans[0].size()==vec.size())ans.push_back(vec);
+            }
+            for(int i = 0 ;i<word.length() ; i++){
+                char original = word[i];
+                for(char c='a' ; c<='z' ; c++){
+                    word[i] = c;
+                    if(st.count(word)>0){
+                        usedOnLevel.push_back(word);
+                        vec.push_back(word);
+                        q.push(vec);
+                        vec.pop_back();
+                    }
+                }
+                word[i]  = original;
+        }
+        }
+        return ans;
+    }
+};
