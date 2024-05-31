@@ -1,0 +1,69 @@
+Problem ::
+1334. Find the City With the Smallest Number of Neighbors at a Threshold Distance
+
+There are n cities numbered from 0 to n-1. Given the array edges where edges[i] = [fromi, toi, weighti] represents a bidirectional and weighted edge between cities fromi and toi, and given the integer distanceThreshold.
+
+Return the city with the smallest number of cities that are reachable through some path and whose distance is at most distanceThreshold, If there are multiple such cities, return the city with the greatest number.
+
+Notice that the distance of a path connecting cities i and j is equal to the sum of the edges' weights along that path.
+
+Time Complexity :: O(V * ELogV))
+Space Complexity :: O(N)
+
+Code :: 
+class Solution {
+public:
+    int findTheCity(int n, vector<vector<int>>& edges, int distanceThreshold) {
+        unordered_map<int, list<pair<int, int>>> adj;
+        for(int i = 0; i < edges.size(); i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int w = edges[i][2];
+
+            adj[u].push_back({w, v});
+            adj[v].push_back({w, u});
+        }
+
+        int index = -1;
+        int ans = INT_MAX;
+        for(int i = 0; i < n; i++){
+            set<pair<int, int>> st;
+            vector<int> dist(n, INT_MAX);
+            dist[i] = 0;
+            st.insert({0, i});
+            
+            while(!st.empty()){
+                pair<int, int> top = *(st.begin());
+                int nodeDistance = top.first;
+                int topNode = top.second;
+                st.erase(*(st.begin()));
+
+                for(auto nbr: adj[topNode]){
+                    if(nodeDistance + nbr.first < dist[nbr.second]){
+                        //cheking if already record exist
+                        auto record = st.find({dist[nbr.second], nbr.second});
+                        if(record != st.end()){
+                            st.erase(record);
+                        }
+                        //update distance if smaller
+                        dist[nbr.second] = nodeDistance + nbr.first;
+                        st.insert({dist[nbr.second], nbr.second});
+                    }
+                }
+            }
+            int count = 0;
+            for(int i = 0; i<n; i++){
+                if(dist[i] <= distanceThreshold){
+                    count++;
+                }
+            }
+
+            if(count <= ans){
+                ans = count;
+                index = max(i, index);
+            }
+        }
+
+        return index;
+    }
+};
