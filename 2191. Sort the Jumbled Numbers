@@ -1,0 +1,51 @@
+Problem :: 
+2191. Sort the Jumbled Numbers
+
+You are given a 0-indexed integer array mapping which represents the mapping rule of a shuffled decimal system. mapping[i] = j means digit i should be mapped to digit j in this system.
+
+The mapped value of an integer is the new integer obtained by replacing each occurrence of digit i in the integer with mapping[i] for all 0 <= i <= 9.
+
+You are also given another integer array nums. Return the array nums sorted in non-decreasing order based on the mapped values of its elements.
+
+Notes:
+
+Elements with the same mapped values should appear in the same relative order as in the input.
+The elements of nums should only be sorted based on their mapped values and not be replaced by them.
+
+Time Complexity :: O(n* max(number))
+Space Complexity :: O(1)
+
+Code ::
+class Solution {
+public:
+    vector<int> sortJumbled(vector<int>& mapping, vector<int>& nums) {
+        vector<pair<int, int>> storePairs;
+
+        for (int i = 0; i < nums.size(); ++i) {
+            int mappedValue = 0;
+            int temp = nums[i];
+            // Start making changes from the units place.
+            int place = 1;
+            // If the value initially is 0, return mapping[0] and index.
+            if (temp == 0) {
+                storePairs.push_back({mapping[0], i});
+                continue;
+            }
+            // Repeat the process for units, tenths, hundredths.. places.
+            while (temp != 0) {
+                mappedValue = place * mapping[temp % 10] + mappedValue;
+                place *= 10;
+                temp /= 10;
+            }
+            storePairs.push_back({mappedValue, i});
+        }
+
+        // Sort the array in non-decreasing order by the first value (default).
+        sort(storePairs.begin(), storePairs.end());
+        vector<int> answer;
+        for (auto pair : storePairs) {
+            answer.push_back(nums[pair.second]);
+        }
+        return answer;
+    }
+};
