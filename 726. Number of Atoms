@@ -1,0 +1,105 @@
+Problem :: 726. Number of Atoms
+
+Given a string formula representing a chemical formula, return the count of each atom.
+
+The atomic element always starts with an uppercase character, then zero or more lowercase letters, representing the name.
+
+One or more digits representing that element's count may follow if the count is greater than 1. If the count is 1, no digits will follow.
+
+For example, "H2O" and "H2O2" are possible, but "H1O2" is impossible.
+Two formulas are concatenated together to produce another formula.
+
+For example, "H2O2He3Mg4" is also a formula.
+A formula placed in parentheses, and a count (optionally added) is also a formula.
+
+For example, "(H2O2)" and "(H2O2)3" are formulas.
+Return the count of all elements as a string in the following form: the first name (in sorted order), followed by its count (if that count is more than 1), followed by the second name (in sorted order), followed by its count (if that count is more than 1), and so on.
+
+The test cases are generated so that all the values in the output fit in a 32-bit integer.
+
+ 
+
+Time Complexity :: O(N)
+Space Complexity :: O(N)
+
+
+Code :: 
+
+class Solution {
+public:
+    string countOfAtoms(string formula) {
+        stack<pair<string,int>>st;
+        for(int i=0 ; i<formula.size() ; i++){
+            if(formula[i]==')'){
+                stack<pair<string,int>>s;
+                while(st.top().first!="("){
+                    auto it = st.top();
+                    st.pop();
+                    s.push(it);
+                }
+                st.pop();
+                int sum =0;
+                while(i+1<formula.size() && formula[i+1]>='0' && formula[i+1]<='9'){
+                    sum = sum*10 + formula[i+1]-'0';
+                    i++;
+                }
+                if(sum>1){
+                while(!s.empty()){
+                    auto it = s.top();
+                    s.pop();
+                    if(it.second == 0 )st.push({it.first,  (it.second+1)*sum } );
+                    else st.push({it.first , it.second * sum});
+                }
+                }
+                else{
+                    while(!s.empty()){
+                    auto it = s.top();
+                    s.pop();
+                   st.push(it);
+                }
+                }
+            }
+            else{
+                string t = "";
+                t += formula[i];
+                while(i+1<formula.size() && formula[i+1]>='a' && formula[i+1]<='z'){
+                    t+=formula[i+1];
+                    i++;
+                }
+                int sum =0;
+                while(i+1<formula.size() && formula[i+1]>='0' && formula[i+1]<='9'){
+                    sum = sum*10 + formula[i+1]-'0';
+                    i++;
+                }
+                st.push({ t , sum });
+                
+            }
+        }
+        map<string , int>m;
+        while(!st.empty()){
+
+            auto it = st.top();
+            st.pop();
+            string sttt = it.first;
+            int k = it.second;
+            cout<<sttt<<" "<<k<<endl;
+            if(m.find(sttt)!=m.end()){
+                if(k==0)m[sttt]+=1;
+                if(m[sttt]==0 && k>0)m[sttt]+=k+1;
+                else m[sttt]+=k;
+             }
+            else {
+                m[sttt]=k;
+                }
+        }
+
+        string ans ="";
+        for(auto it:m){
+            ans +=it.first;
+            if(it.second ==0)continue;
+            else ans += to_string(it.second);
+
+        }
+        return ans;
+    }
+}; 
